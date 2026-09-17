@@ -5,7 +5,7 @@ set -e
 export LOG_DIR=${LOG_DIR:-./logs}
 export now=`date '+%Y%m%d_%H%M%S'`
 export JOBNAME=${now}_${1:-eval}
-export RUN_DIR=$LOG_DIR/$JOBNAME
+export RUN_DIR=$(cd $LOG_DIR && pwd)/$JOBNAME   # orbax requires an absolute path
 mkdir -p ${RUN_DIR}
 
 python3 main.py \

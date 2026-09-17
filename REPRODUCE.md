@@ -76,10 +76,14 @@ machine, not just single-GPU.**
 `tf.make_ndarray(v.tensor)`. `tools/dump_curve.py <workdir>` does this for you and prints `v_loss`
 with an ASCII bar chart; `tensorboard --logdir <workdir>` also works.
 
-**4. VAE decoding is the memory bottleneck**, not the DiT. `device_batch_size` drives both
+**4. `--workdir` must be an ABSOLUTE path.** orbax rejects a relative checkpoint dir with
+`ValueError: Checkpoint path should be absolute`. This fails at the *first checkpoint save*, not at
+startup, so a run can burn its whole training budget before dying. Use `--workdir=$(pwd)/runs/name`.
+
+**5. VAE decoding is the memory bottleneck**, not the DiT. `device_batch_size` drives both
 sampling and decoding; at 50 the decoder asked XLA for 141 GiB. 25–32 is right for 24 GB.
 
-**5. The FID stats "zip" from Google Drive is already an `.npz`** (an npz *is* a zip of
+**6. The FID stats "zip" from Google Drive is already an `.npz`** (an npz *is* a zip of
 `.npy` files). Rename it, do not extract it.
 
 ## Reproducing the FID number (no ImageNet needed)
