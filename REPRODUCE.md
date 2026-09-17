@@ -69,7 +69,8 @@ is the real curve. It is written to TensorBoard but not to stdout. **This applie
 machine, not just single-GPU.**
 
 **3. Scalars in the event files are tensor summaries**, not `simple_value` — read them with
-`tf.make_ndarray(v.tensor)`.
+`tf.make_ndarray(v.tensor)`. `tools/dump_curve.py <workdir>` does this for you and prints `v_loss`
+with an ASCII bar chart; `tensorboard --logdir <workdir>` also works.
 
 **4. VAE decoding is the memory bottleneck**, not the DiT. `device_batch_size` drives both
 sampling and decoding; at 50 the decoder asked XLA for 141 GiB. 25–32 is right for 24 GB.
