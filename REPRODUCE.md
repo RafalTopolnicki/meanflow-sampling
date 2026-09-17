@@ -3,9 +3,9 @@
 Notes from reproducing [Mean Flows for One-step Generative Modeling](https://arxiv.org/abs/2505.13447)
 (Geng, Deng, Bai, Kolter, He — arXiv 2505.13447) on one RTX 4090.
 
-The upstream repo is written for TPU pods. Everything here is on branch `repro-gpu`;
-`git diff main` shows exactly what deviates from upstream (29 lines, all environmental —
-nothing touches the method).
+The upstream repo is written for TPU pods. This copy adapts it to a single CUDA GPU.
+The changes to upstream code are ~29 lines and entirely environmental — **nothing touches the
+method**; `meanflow.py` differs from upstream by one line (a removed JAX kwarg).
 
 ## Results
 
@@ -41,7 +41,7 @@ Harmless here — torch is only used for data loading and CPU-side resizing.
 
 `diffusers` is pinned because `FlaxAutoencoderKL` is needed; newer releases drop Flax support.
 
-## Patches applied (branch `repro-gpu`)
+## Patches applied to upstream code
 
 | File | Change | Why |
 |---|---|---|
@@ -51,8 +51,12 @@ Harmless here — torch is only used for data loading and CPU-side resizing.
 | `meanflow.py` | `jnp.clip(t-r, a_min=, a_max=)` -> positional | kwargs removed in JAX >= 0.6 |
 | `utils/vae_util.py` | `cost_analysis()` handles dict and list | returns a list on jax<=0.4, a dict on jax>=0.5 |
 
-New files: `configs/eval_b4.yml`, `configs/smoke_train.yml`, `scripts/launch_eval_gpu.sh`,
-`tools/check_identity.py`, `tools/sample_grid.py`.
+New files: `configs/eval_b4.yml`, `configs/smoke_train.yml`, `configs/smoke_resume.yml`,
+`scripts/install_gpu.sh`, `scripts/launch_eval_gpu.sh`, `tools/check_identity.py`,
+`tools/sample_grid.py`, `tools/dump_curve.py`.
+
+Configs named `configs/local_*.yml` are gitignored — put real machine paths there and leave the
+committed configs as placeholders. `scripts/launch_eval_gpu.sh` takes `CONFIG=...` to select one.
 
 ## Gotchas (single-GPU)
 
