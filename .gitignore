@@ -168,3 +168,5 @@ tmp/
 wandb
 wandb_logs
 data
+# Machine-local configs (real paths, never committed) -- see REPRODUCE.md
+configs/local_*.yml
