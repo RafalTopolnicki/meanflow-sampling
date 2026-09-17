@@ -170,3 +170,8 @@ wandb_logs
 data
 # Machine-local configs (real paths, never committed) -- see REPRODUCE.md
 configs/local_*.yml
+
+# Training outputs (checkpoints are GB-scale) and machine-local notes
+runs/
+logs/
+*.local.md
