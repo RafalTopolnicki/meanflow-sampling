@@ -1,0 +1,24 @@
+# Eval-only reproduction of the repo's MF-B/4 sanity check (README: FID 11.4).
+# Single-GPU variant of run_b4.yml.
+model:
+    cls: DiT_B_4
+
+dataset:
+    root: UNUSED_IN_EVAL_ONLY
+
+training:
+    batch_size: 256
+    ema_type: 'const'
+    num_epochs: 240
+
+fid:
+    on_training: True
+    device_batch_size: 25      # 20 on TPU; VAE decode is the memory bottleneck on one GPU
+    num_samples: 50000
+    cache_ref: YOUR_FID_STATS_NPZ
+
+sampling:
+    num_steps: 1               # 1-NFE
+
+load_from: YOUR_CKPT_DIR      # dir containing checkpoint_1200960/
+eval_only: True

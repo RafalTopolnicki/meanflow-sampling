@@ -1,0 +1,28 @@
+# Training smoke test: 10-class Imagenette latents, ~5 min on one GPU.
+# Exercises train step (JVP), EMA, checkpoint save, sampling, FID eval.
+model:
+    cls: DiT_B_4
+dataset:
+    root: YOUR_LATENT_DIR          # output_dir from prepare_dataset.py
+    num_workers: 8
+training:
+    batch_size: 256
+    learning_rate: 0.0001
+    adam_b2: 0.95
+    ema_type: 'const'
+    ema_val: 0.999          # shorter horizon so EMA moves in a short run
+    num_epochs: 22
+    log_per_step: 20
+    sample_on_training: True
+    sample_per_epoch: 10
+    checkpoint_per_epoch: 10
+    fid_per_epoch: 1000
+fid:
+    on_training: True
+    device_batch_size: 32     # must be a multiple of 16: make_grid_visualization(grid=4)
+    num_samples: 1000
+    cache_ref: YOUR_FID_STATS_NPZ
+sampling:
+    num_steps: 1
+load_from: YOUR_SMOKE_WORKDIR  # workdir of the run to resume
+eval_only: False
