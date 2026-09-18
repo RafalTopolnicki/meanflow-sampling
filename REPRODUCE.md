@@ -66,6 +66,13 @@ assumes at least `col*row*max_bz = 128` images to trim from. On a TPU host that 
 (8 devices x 20 = 160 -> trimmed to 128); on one GPU you get `device_batch_size x 1`.
 Never fires under `eval_only`, which skips visualization entirely.
 
+**2a. `ema_val` must match the training length.** `1/(1-ema_val)` is the averaging window in
+steps. The repo default `0.9999` (10,000-step window) is right for the authors' 1,200,960-step run
+but catastrophic on a short one: over 7,200 steps it leaves **0.487 weight on the random
+initialization**, and FID measured on `ema_params` came out **166-173 points worse** than on raw
+`params` for the same checkpoint. Any short run (ablations, smoke tests) needs `ema_val: 0.999` or
+lower. Diagnose with `tools/eval_fid.py --which=both`.
+
 **2. Track `v_loss`, not `loss`.** With `norm_p=1.0` the adaptive weighting computes
 `loss / stop_grad(loss + norm_eps)^p`, so once the raw loss exceeds ~0.01 the logged `loss`
 is pinned at 1.0 forever and carries no signal. `v_loss` (plain velocity MSE, monitoring-only)
